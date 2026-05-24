@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ocean Foods WTP Monitor</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#0a3d62,#3c6382);
+color:#fff;
+}
+.header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:15px 20px;
+background:rgba(0,0,0,0.3);
+}
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
+}
+.logo img{
+height:50px;
+}
+.container{
+padding:20px;
+}
+.card{
+background:rgba(255,255,255,0.1);
+padding:15px;
+border-radius:12px;
+margin-bottom:15px;
+backdrop-filter:blur(10px);
+}
+input{
+padding:8px;
+margin:5px;
+border-radius:6px;
+border:none;
+}
+button{
+padding:10px 15px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#00a8ff;
+color:#fff;
+}
+button:hover{background:#0097e6;}
+.hidden{display:none;}
+.tank{
+margin:10px 0;
+}
+.bar{
+width:100%;
+height:20px;
+background:#222;
+border-radius:10px;
+overflow:hidden;
+}
+.fill{
+height:100%;
+background:linear-gradient(90deg,#00a8ff,#00d2d3);
+width:0%;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+<div class="logo">
+<img src="logo.png" alt="logo" />
+<h2>Ocean Foods WTP Monitor</h2>
+</div>
+<button onclick="logout()">Logout</button>
+</div>
+
+<div id="loginPage" class="container">
+<div class="card">
+<h3>Login</h3>
+<input id="user" placeholder="Username" />
+<input id="pass" type="password" placeholder="Password" />
+<br/>
+<button onclick="login()">Login</button>
+</div>
+</div>
+
+<div id="dashboard" class="container hidden">
+
+<div class="card">
+<h3>Tank Monitoring</h3>
+
+<div class="tank">
+RO Tank (70,000 L)
+<input id="ro" type="number" placeholder="Current Level" />
+<div class="bar"><div id="roBar" class="fill"></div></div>
+</div>
+
+<div class="tank">
+Softener Tank (500,000 L)
+<input id="soft" type="number" placeholder="Current Level" />
+<div class="bar"><div id="softBar" class="fill"></div></div>
+</div>
+
+<div class="tank">
+Raw Tank (70,000 L)
+<input id="raw" type="number" placeholder="Current Level" />
+<div class="bar"><div id="rawBar" class="fill"></div></div>
+</div>
+
+<button onclick="updateLevels()">Update Levels</button>
+</div>
+
+<div class="card">
+<h3>Reports</h3>
+<button onclick="downloadPDF()">Download PDF Report</button>
+</div>
+
+</div>
+
+<script>
+const CAPACITY = {
+ro:70000,
+soft:500000,
+raw:70000
+};
+
+function login(){
+let u=document.getElementById('user').value;
+let p=document.getElementById('pass').value;
+if(u==='admin' && p==='1234'){
+ document.getElementById('loginPage').classList.add('hidden');
+ document.getElementById('dashboard').classList.remove('hidden');
+}else{
+ alert('Invalid login');
+}
+}
+
+function logout(){
+location.reload();
+}
+
+function updateLevels(){
+let ro=document.getElementById('ro').value||0;
+let soft=document.getElementById('soft').value||0;
+let raw=document.getElementById('raw').value||0;
+
+document.getElementById('roBar').style.width=(ro/CAPACITY.ro*100)+'%';
+document.getElementById('softBar').style.width=(soft/CAPACITY.soft*100)+'%';
+document.getElementById('rawBar').style.width=(raw/CAPACITY.raw*100)+'%';
+}
+
+function downloadPDF(){
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF();
+doc.text("Ocean Foods WTP Report",10,10);
+doc.text("RO Tank: "+document.getElementById('ro').value,10,20);
+doc.text("Softener Tank: "+document.getElementById('soft').value,10,30);
+doc.text("Raw Tank: "+document.getElementById('raw').value,10,40);
+doc.text("Created by Bimsara Priyamantha",10,60);
+doc.save("WTP_Report.pdf");
+}
+</script>
+
+</body>
+</html>
